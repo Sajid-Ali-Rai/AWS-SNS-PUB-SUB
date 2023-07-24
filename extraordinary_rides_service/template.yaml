@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  Wild Rydes Asynchronous Messaging Workshop - Lab 0
+
+  Template to setup the AWS Cloud9 environment for the workshop.
+
+Parameters:
+  Cloud9CidrBlock:
+    Description: The CIDR block range for your Cloud9 IDE VPC
+    Type: String
+    Default: 10.90.0.0/16
+  GitRepositoryURL:
+    Description: The Git repository URL for the project we are cloning
+    Type: String
+    Default: https://github.com/aws-samples/asynchronous-messaging-workshop.git
+  PublicSubnet1:
+    Description: The ID of the existing public subnet for Cloud9
+    Type: String
+    Default: subnet-001fdcb74f934a9b0
+
+Resources:
+  Cloud9:
+    Type: AWS::Cloud9::EnvironmentEC2
+    Properties:
+      AutomaticStopTimeMinutes: 30
+      Description: Wild Rydes Async Messaging Workspace
+      InstanceType: t2.micro
+      Name: !Sub 'WildRydesAsyncMessaging-${AWS::StackName}'
+      Repositories:
+        - PathComponent: /wild-rydes-async-messaging
+          RepositoryUrl: !Ref GitRepositoryURL
+      SubnetId: !Ref PublicSubnet1
+      ImageId: amazonlinux-2-x86_64
+
+Outputs:
+  Cloud9DevEnvUrl:
+    Description: Cloud9 Development Environment
+    Value: !Sub 'https://${AWS::Region}.console.aws.amazon.com/cloud9/ide/${Cloud9}'
